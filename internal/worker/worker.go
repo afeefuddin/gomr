@@ -63,7 +63,7 @@ func PerformTask(req *workerpb.TaskRequest) {
 		MapReduceWorkerConfig.Mapper(&taskContext{phase: "map"}, string(data))
 
 		// Sync the in memory mapper data to minio
-		SyncReducerDataToMinio()
+		SyncReducerDataToMinio(req.Id)
 
 	} else {
 		id, err := strconv.ParseInt(req.Id, 10, 64)
@@ -177,7 +177,7 @@ func RegisterWithMaster(config *WorkerConfig) {
 	}
 }
 
-func SyncReducerDataToMinio() {
+func SyncReducerDataToMinio(mapTaskID string) {
 	data := make([]string, len(MapperData))
 	for i, elem := range MapperData {
 		var reducerDataBuilder strings.Builder
@@ -189,7 +189,7 @@ func SyncReducerDataToMinio() {
 	}
 
 	for i, d := range data {
-		storage.UploadData(fmt.Sprintf("workers/worker-%s/reducer-%d.txt", MapReduceWorkerConfig.WorkerId, i), d)
+		storage.UploadData(fmt.Sprintf("workers/tasks/%s/reducer-%d.txt", mapTaskID, i), d)
 	}
 }
 

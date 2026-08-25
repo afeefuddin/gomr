@@ -126,7 +126,10 @@ func applyWorkerDeployment(ctx context.Context, data *GomrData) error {
 	if err := run(ctx, "kubectl", "set", "image", "deployment/worker", "worker="+data.workerImage); err != nil {
 		return err
 	}
-	if err := run(ctx, "kubectl", "set", "env", "deployment/worker", "GOMR_ROLLOUT_ID="+data.rolloutID); err != nil {
+	if err := run(ctx, "kubectl", "set", "env", "deployment/worker",
+		"REDUCERS_COUNT="+fmt.Sprint(data.reducerWorkersCount),
+		"GOMR_ROLLOUT_ID="+data.rolloutID,
+	); err != nil {
 		return err
 	}
 	return run(ctx, "kubectl", "scale", "deployment/worker", "--replicas="+fmt.Sprint(data.workerCount))

@@ -8,7 +8,6 @@ type Mapper func(ctx Context, chunk string)
 type Reducer func(ctx Context, key string, value []int)
 
 type MapReduceConfig struct {
-	Mapper       Mapper
-	Reducer      Reducer
-	ReducerCount int
+	Mapper  Mapper
+	Reducer Reducer
 }
